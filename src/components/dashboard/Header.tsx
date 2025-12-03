@@ -1,7 +1,8 @@
 import React from 'react';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { logout } from '@/store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Bell, Settings, Menu } from 'lucide-react';
 import {
@@ -19,11 +20,12 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
-  const { user, logout } = useAuth();
+  const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     navigate('/');
   };
 

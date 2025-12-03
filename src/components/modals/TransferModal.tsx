@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { updateBalance } from '@/store/authSlice';
 import { paymentsApi } from '@/services/api';
 import { toast } from 'sonner';
 import { Loader2, Send, CheckCircle } from 'lucide-react';
@@ -21,7 +22,8 @@ interface TransferModalProps {
 }
 
 export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) => {
-  const { user, updateBalance } = useAuth();
+  const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [result, setResult] = useState<{ billNo: string; tranNo: string } | null>(null);
@@ -64,7 +66,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
           billNo: response.data.bill_payment_no,
           tranNo: response.data.tran_no,
         });
-        updateBalance(user.balance - amount);
+        dispatch(updateBalance(user.balance - amount));
         toast.success('Payment successful!');
       } else {
         toast.error(response.message || 'Payment failed');

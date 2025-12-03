@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store/hooks';
 import { payeesApi } from '@/services/api';
 import { toast } from 'sonner';
 import { Loader2, UserPlus, CheckCircle } from 'lucide-react';
@@ -20,7 +20,7 @@ interface AddPayeeModalProps {
 }
 
 export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) => {
-  const { user } = useAuth();
+  const { user } = useAppSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   

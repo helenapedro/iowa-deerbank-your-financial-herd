@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store/hooks';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { Shield, TrendingUp, Users, ArrowRight } from 'lucide-react';
 
 const Index: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
