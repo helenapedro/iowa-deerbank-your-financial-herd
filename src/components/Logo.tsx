@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -18,6 +20,8 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true }) => {
     lg: 'text-3xl',
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex items-center gap-3">
       <div className={`${sizeClasses[size]} relative`}>
@@ -35,9 +39,12 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true }) => {
       </div>
       {showText && (
         <div className="flex flex-col">
-          <span className={`font-display font-bold ${textSizes[size]} text-foreground leading-tight`}>
-            Iowa DeerBank
-          </span>
+          <span 
+              className={`font-display font-bold ${textSizes[size]} text-foreground leading-tight`} 
+              onClick={() => navigate('/')}
+            >
+              Iowa DeerBank
+            </span>
           {size !== 'sm' && (
             <span className="text-xs text-muted-foreground tracking-wider uppercase">
               Banking Naturally

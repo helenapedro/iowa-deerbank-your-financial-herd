@@ -147,7 +147,7 @@ const Auth: React.FC = () => {
         </div>
         
         <div className="relative z-10 text-sm text-primary-foreground/60">
-          © 2024 Iowa DeerBank. FDIC Insured.
+          © 2025 Iowa DeerBank. FDIC Insured.
         </div>
       </div>
 

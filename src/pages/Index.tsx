@@ -78,9 +78,6 @@ const Index: React.FC = () => {
                 Open Your Account
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button variant="outline" size="xl">
-                Learn More
-              </Button>
             </div>
 
             <div className="flex items-center gap-8 pt-4">
@@ -200,13 +197,8 @@ const Index: React.FC = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <Logo size="sm" />
             <p className="text-sm text-muted-foreground">
-              © 2024 Iowa DeerBank. All rights reserved. FDIC Insured.
+              © 2025 Iowa DeerBank. All rights reserved. FDIC Insured.
             </p>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-              <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="hover:text-foreground transition-colors">Contact</a>
-            </div>
           </div>
         </div>
       </footer>
