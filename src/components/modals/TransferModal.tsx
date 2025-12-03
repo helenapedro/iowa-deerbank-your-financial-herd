@@ -149,7 +149,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Available: ${user?.balance.toFixed(2)}
+                  Available: ${Number(user?.balance ?? 0).toFixed(2)}
                 </p>
               </div>
               <div className="space-y-2">
