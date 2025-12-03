@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store/hooks';
 import { Header } from '@/components/dashboard/Header';
 import { BalanceCard } from '@/components/dashboard/BalanceCard';
 import { QuickActions } from '@/components/dashboard/QuickActions';
@@ -12,19 +11,12 @@ import { Transaction } from '@/types/auth';
 import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [addPayeeModalOpen, setAddPayeeModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, isLoading, navigate]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -55,7 +47,7 @@ const Dashboard: React.FC = () => {
     }
   }, [user]);
 
-  if (isLoading || !user) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Loading...</div>

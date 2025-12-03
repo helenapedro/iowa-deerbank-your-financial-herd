@@ -6,14 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { login } from '@/store/authSlice';
 import { authApi } from '@/services/api';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
@@ -56,7 +58,7 @@ const Auth: React.FC = () => {
       });
       
       if (response.success) {
-        login(response.data);
+        dispatch(login(response.data));
         toast.success(response.message || 'Welcome back!');
         navigate('/dashboard');
       } else {
@@ -98,7 +100,7 @@ const Auth: React.FC = () => {
       });
       
       if (response.success) {
-        login(response.data);
+        dispatch(login(response.data));
         toast.success(response.message || 'Registration successful!');
         navigate('/dashboard');
       } else {
