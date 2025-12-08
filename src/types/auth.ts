@@ -1,19 +1,4 @@
-export interface User {
-  credentialId: number;
-  username: string;
-  userType: 'CUSTOMER' | 'ADMIN';
-  status: 'ACTIVE' | 'INACTIVE';
-  userId: number;
-  name: string;
-  dob: string;
-  address: string;
-  contactNo: string;
-  accountId: number;
-  accountNo: string;
-  accountType: 'SAVINGS' | 'CHECKING';
-  balance: number;
-}
-
+// Auth DTOs
 export interface LoginRequest {
   username: string;
   password: string;
@@ -27,13 +12,97 @@ export interface RegisterRequest {
   accountNumber: string;
 }
 
+export interface LoginResponse {
+  credentialId: number;
+  username: string;
+  userType: 'CUSTOMER' | 'MASTER';
+  status: string;
+  userId: number;
+  name: string;
+  dob: string;
+  address: string;
+  contactNo: string;
+  accountId: number;
+  accountNo: string;
+  accountType: string;
+  balance: number;
+}
+
+// For backwards compatibility
+export type User = LoginResponse;
+
 export interface AuthResponse {
-  data: User;
+  data: LoginResponse;
   success: boolean;
   message: string;
 }
 
-export interface Transaction {
+// Account DTOs
+export interface CreateAccountRequest {
+  name: string;
+  dob: string;
+  address: string;
+  contactNo: string;
+  ssn: string;
+  createdBy: string;
+  accountType: 'SAVINGS' | 'CHECKING' | 'BUSINESS';
+  initialBalance: number;
+  accountCreatedBy: number;
+  interestRate?: number;
+  overdraftLimit?: number;
+}
+
+export interface AccountResponse {
+  userId: number;
+  name: string;
+  dob: string;
+  address: string;
+  contactNo: string;
+  ssn: string;
+  createdBy: string;
+  accountId: number;
+  accountNo: string;
+  accountType: string;
+  balance: number;
+  status: string;
+  openedDate: string;
+  interestRate: number;
+  overdraftLimit: number;
+}
+
+export interface DepositRequest {
+  accountNo: string;
+  name: string;
+  contactNo: string;
+  amount: number;
+}
+
+export interface WithdrawalRequest {
+  accountNo: string;
+  name: string;
+  contactNo: string;
+  amount: number;
+}
+
+export interface TransactionResponse {
+  transactionNo: string;
+  accountNo: string;
+  transactionType: string;
+  amount: number;
+  previousBalance: number;
+  newBalance: number;
+  transactionDate: string;
+  message: string;
+}
+
+export interface GetTransactionsRequest {
+  accountNo: string;
+  name?: string;
+  contactNo?: string;
+  isMasterUser?: boolean;
+}
+
+export interface TransactionHistoryDTO {
   tranId: number;
   tranNo: string;
   tranDatetime: string;
@@ -46,14 +115,30 @@ export interface Transaction {
   receivedAccId: number | null;
 }
 
+// For backwards compatibility
+export type Transaction = TransactionHistoryDTO;
+
 export interface TransactionsResponse {
-  data: Transaction[];
+  data: TransactionHistoryDTO[];
   success: boolean;
   count: number;
   message: string;
 }
 
-export interface Payee {
+// Payee DTOs
+export interface PayeeRequest {
+  name: string;
+  nickname?: string;
+  email?: string;
+  phone?: string;
+  accountNo: string;
+  userId: number;
+}
+
+// For backwards compatibility
+export type CreatePayeeRequest = PayeeRequest;
+
+export interface PayeeResponse {
   payeeId: number;
   name: string;
   nickname: string;
@@ -65,22 +150,22 @@ export interface Payee {
   accountId: number;
 }
 
-export interface CreatePayeeRequest {
-  name: string;
-  nickname: string;
-  email: string;
-  phone: string;
-  accountNo: string;
-  userId: number;
-}
+export type Payee = PayeeResponse;
 
-export interface PayeeResponse {
-  data: Payee;
+export interface PayeeApiResponse {
+  data: PayeeResponse;
   success: boolean;
   message: string;
 }
 
-export interface PaymentRequest {
+export interface PayeesListResponse {
+  data: PayeeResponse[];
+  success: boolean;
+  message: string;
+}
+
+// Bill Payment DTOs
+export interface BillPaymentRequest {
   customer_account: string;
   payeeAccount: string;
   payment_type: 'ONCE' | 'RECURRING';
@@ -88,12 +173,27 @@ export interface PaymentRequest {
   description: string;
 }
 
-export interface PaymentResponse {
-  data: {
-    bill_payment_no: string;
-    amount: number;
-    tran_no: string;
-  };
+// For backwards compatibility
+export type PaymentRequest = BillPaymentRequest;
+
+export interface BillPaymentResponse {
+  bill_payment_no: string;
+  amount: number;
+  tran_no: string;
+}
+
+export interface PaymentApiResponse {
+  data: BillPaymentResponse;
+  success: boolean;
+  message: string;
+}
+
+// For backwards compatibility
+export type PaymentResponse = PaymentApiResponse;
+
+// Generic API Response
+export interface ApiResponse<T> {
+  data: T;
   success: boolean;
   message: string;
 }
