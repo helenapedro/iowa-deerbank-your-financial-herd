@@ -24,12 +24,12 @@ const Dashboard: React.FC = () => {
       
       setLoadingTransactions(true);
       try {
-        const response = await accountsApi.getTransactions(
-          user.accountNo,
-          user.name,
-          user.contactNo,
-          true
-        );
+        const response = await accountsApi.getTransactions({
+          accountNo: user.accountNo,
+          name: user.name,
+          contactNo: user.contactNo,
+          isMasterUser: true
+        });
         
         if (response.success) {
           setTransactions(response.data);

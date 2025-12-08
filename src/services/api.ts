@@ -3,10 +3,18 @@ import {
   RegisterRequest, 
   AuthResponse, 
   TransactionsResponse,
-  CreatePayeeRequest,
-  PayeeResponse,
-  PaymentRequest,
-  PaymentResponse
+  GetTransactionsRequest,
+  PayeeRequest,
+  PayeeApiResponse,
+  PayeesListResponse,
+  BillPaymentRequest,
+  PaymentApiResponse,
+  CreateAccountRequest,
+  AccountResponse,
+  DepositRequest,
+  WithdrawalRequest,
+  TransactionResponse,
+  ApiResponse
 } from '@/types/auth';
 
 const API_BASE_URL = 'http://localhost:8080/api';
@@ -40,34 +48,94 @@ export const authApi = {
 };
 
 export const accountsApi = {
-  getTransactions: async (accountNo: string, name: string, contactNo: string, isMasterUser: boolean = true): Promise<TransactionsResponse> => {
+  create: async (data: CreateAccountRequest): Promise<ApiResponse<AccountResponse>> => {
+    const response = await fetch(`${API_BASE_URL}/accounts/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ApiResponse<AccountResponse>>(response);
+  },
+
+  deposit: async (data: DepositRequest): Promise<ApiResponse<TransactionResponse>> => {
+    const response = await fetch(`${API_BASE_URL}/accounts/deposit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ApiResponse<TransactionResponse>>(response);
+  },
+
+  withdraw: async (data: WithdrawalRequest): Promise<ApiResponse<TransactionResponse>> => {
+    const response = await fetch(`${API_BASE_URL}/accounts/withdrawal`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<ApiResponse<TransactionResponse>>(response);
+  },
+
+  getTransactions: async (data: GetTransactionsRequest): Promise<TransactionsResponse> => {
     const response = await fetch(`${API_BASE_URL}/accounts/transactions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ accountNo, name, contactNo, isMasterUser }),
+      body: JSON.stringify(data),
     });
     return handleResponse<TransactionsResponse>(response);
   },
 };
 
 export const payeesApi = {
-  create: async (data: CreatePayeeRequest): Promise<PayeeResponse> => {
+  getAll: async (): Promise<PayeesListResponse> => {
+    const response = await fetch(`${API_BASE_URL}/payees`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return handleResponse<PayeesListResponse>(response);
+  },
+
+  getById: async (id: number): Promise<PayeeApiResponse> => {
+    const response = await fetch(`${API_BASE_URL}/payees/${id}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return handleResponse<PayeeApiResponse>(response);
+  },
+
+  create: async (data: PayeeRequest): Promise<PayeeApiResponse> => {
     const response = await fetch(`${API_BASE_URL}/payees/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    return handleResponse<PayeeResponse>(response);
+    return handleResponse<PayeeApiResponse>(response);
+  },
+
+  update: async (id: number, data: PayeeRequest): Promise<PayeeApiResponse> => {
+    const response = await fetch(`${API_BASE_URL}/payees?id=${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return handleResponse<PayeeApiResponse>(response);
+  },
+
+  delete: async (id: number): Promise<ApiResponse<string>> => {
+    const response = await fetch(`${API_BASE_URL}/payees?id=${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return handleResponse<ApiResponse<string>>(response);
   },
 };
 
 export const paymentsApi = {
-  pay: async (data: PaymentRequest): Promise<PaymentResponse> => {
+  pay: async (data: BillPaymentRequest): Promise<PaymentApiResponse> => {
     const response = await fetch(`${API_BASE_URL}/bill-payment/pay`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    return handleResponse<PaymentResponse>(response);
+    return handleResponse<PaymentApiResponse>(response);
   },
 };
