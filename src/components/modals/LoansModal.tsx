@@ -35,7 +35,10 @@ export const LoansModal: React.FC<LoansModalProps> = ({ open, onClose }) => {
     setLoading(true);
     try {
       const response = await loansApi.getByUserId(user.userId);
-      if (response.success && response.data) {
+      // Handle both wrapped response {success, data} and direct array response
+      if (Array.isArray(response)) {
+        setLoans(response);
+      } else if (response.data) {
         setLoans(response.data);
       }
     } catch (error) {
@@ -55,7 +58,11 @@ export const LoansModal: React.FC<LoansModalProps> = ({ open, onClose }) => {
     setLoadingPayments(loanId);
     try {
       const response = await loanPaymentsApi.getByLoanId(loanId);
-      if (response.success && response.data) {
+      // Handle both wrapped response {success, data} and direct array response
+      if (Array.isArray(response)) {
+        setPayments(prev => ({ ...prev, [loanId]: response }));
+        setExpandedLoan(loanId);
+      } else if (response.data) {
         setPayments(prev => ({ ...prev, [loanId]: response.data }));
         setExpandedLoan(loanId);
       }
