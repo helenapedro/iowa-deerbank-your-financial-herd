@@ -196,12 +196,28 @@ export const paymentsApi = {
 export const loansApi = {
   // Apply for a new loan - returns LoanDTO directly
   apply: async (data: LoanRequestDTO): Promise<LoanDTO> => {
+    console.log('=== LOAN API REQUEST ===');
+    console.log('URL:', `${API_BASE_URL}/loans/apply`);
+    console.log('Payload:', JSON.stringify(data, null, 2));
+    
     const response = await fetch(`${API_BASE_URL}/loans/apply`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    return handleResponse<LoanDTO>(response);
+    
+    const responseData = await response.json();
+    console.log('=== LOAN API RESPONSE ===');
+    console.log('Status:', response.status);
+    console.log('Response:', JSON.stringify(responseData, null, 2));
+    
+    if (!response.ok) {
+      const error = new Error(responseData.error || responseData.message || 'Validation failed');
+      (error as any).response = responseData;
+      throw error;
+    }
+    
+    return responseData as LoanDTO;
   },
 
   // Get loan by ID
