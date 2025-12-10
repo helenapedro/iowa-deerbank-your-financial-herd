@@ -95,28 +95,24 @@ export const ApplyLoanModal: React.FC<ApplyLoanModalProps> = ({ open, onClose, o
 
     setLoading(true);
     try {
-      const response = await loansApi.apply({
+      const loan = await loansApi.apply({
         ...formData,
         accountNumber: user.accountNo,
       });
 
-      if (response.success) {
-        toast.success(`Loan application submitted! Loan No: ${response.data.loanNo}`);
-        onSuccess?.();
-        onClose();
-        // Reset form
-        setFormData({
-          accountNumber: user.accountNo,
-          loanType: 'PERSONAL',
-          principalAmount: 0,
-          interestRate: 10.5,
-          loanTermMonths: 36,
-          purpose: '',
-          collateral: '',
-        });
-      } else {
-        toast.error(response.message || 'Failed to submit loan application');
-      }
+      toast.success(`Loan application submitted! Loan No: ${loan.loanNo}`);
+      onSuccess?.();
+      onClose();
+      // Reset form
+      setFormData({
+        accountNumber: user.accountNo,
+        loanType: 'PERSONAL',
+        principalAmount: 0,
+        interestRate: 10.5,
+        loanTermMonths: 36,
+        purpose: '',
+        collateral: '',
+      });
     } catch (error: any) {
       console.error('Loan application error:', error);
       // Handle backend error response format: { error: "...", status: "error" }

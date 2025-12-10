@@ -16,6 +16,7 @@ import {
   TransactionResponse,
   ApiResponse,
   LoanRequestDTO,
+  LoanDTO,
   LoanApiResponse,
   LoansListResponse,
   LoanPaymentRequest,
@@ -175,14 +176,14 @@ export const paymentsApi = {
 };
 
 export const loansApi = {
-  // Apply for a new loan
-  apply: async (data: LoanRequestDTO): Promise<LoanApiResponse> => {
+  // Apply for a new loan - returns LoanDTO directly
+  apply: async (data: LoanRequestDTO): Promise<LoanDTO> => {
     const response = await fetch(`${API_BASE_URL}/loans/apply`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    return handleResponse<LoanApiResponse>(response);
+    return handleResponse<LoanDTO>(response);
   },
 
   // Get loan by ID
