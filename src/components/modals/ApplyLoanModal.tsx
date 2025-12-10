@@ -117,9 +117,11 @@ export const ApplyLoanModal: React.FC<ApplyLoanModalProps> = ({ open, onClose, o
       } else {
         toast.error(response.message || 'Failed to submit loan application');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Loan application error:', error);
-      toast.error('Failed to submit loan application');
+      // Handle backend error response format: { error: "...", status: "error" }
+      const errorMessage = error?.response?.error || error?.message || 'Failed to submit loan application';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
