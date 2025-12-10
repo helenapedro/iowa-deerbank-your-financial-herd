@@ -24,7 +24,9 @@ import {
   LoanSummaryResponse
 } from '@/types/auth';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+// Use ngrok for Lovable preview, localhost for local development
+// Change to 'http://localhost:8080/api' if running frontend locally without ngrok
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://janett-achlamydate-springingly.ngrok-free.dev/api';
 const API_KEY = 'my-super-secret-api-key-12345';
 
 // Token management
@@ -39,7 +41,8 @@ export const getAuthToken = () => authToken;
 const getHeaders = (includeAuth: boolean = true): HeadersInit => {
   const headers: HeadersInit = { 
     'Content-Type': 'application/json',
-    'X-API-Key': API_KEY
+    'X-API-Key': API_KEY,
+    'ngrok-skip-browser-warning': 'true' // Required for ngrok free tier
   };
   if (includeAuth && authToken) {
     headers['Authorization'] = `Bearer ${authToken}`;
