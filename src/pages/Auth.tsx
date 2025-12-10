@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { login } from '@/store/authSlice';
-import { authApi } from '@/services/api';
+import { authApi, setAuthToken } from '@/services/api';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -58,6 +58,10 @@ const Auth: React.FC = () => {
       });
       
       if (response.success) {
+        // Set the auth token for API calls
+        if (response.data.token) {
+          setAuthToken(response.data.token);
+        }
         dispatch(login(response.data));
         toast.success(response.message || 'Welcome back!');
         navigate('/dashboard');
@@ -100,6 +104,10 @@ const Auth: React.FC = () => {
       });
       
       if (response.success) {
+        // Set the auth token for API calls
+        if (response.data.token) {
+          setAuthToken(response.data.token);
+        }
         dispatch(login(response.data));
         toast.success(response.message || 'Registration successful!');
         navigate('/dashboard');
