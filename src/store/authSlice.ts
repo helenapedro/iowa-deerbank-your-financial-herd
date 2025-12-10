@@ -46,6 +46,10 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.isLoading = false;
       localStorage.setItem('deerbank_user', JSON.stringify(action.payload));
+      // Set the auth token for API calls
+      if (action.payload.token) {
+        setAuthToken(action.payload.token);
+      }
     },
     logout: (state) => {
       state.user = null;
