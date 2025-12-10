@@ -3,10 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAppSelector } from '@/store/hooks';
-import { loansApi } from '@/services/api';
-import { LoanDTO } from '@/types/auth';
+import { loansApi, loanPaymentsApi } from '@/services/api';
+import { LoanDTO, LoanPaymentDTO } from '@/types/auth';
 import { toast } from 'sonner';
-import { Building, Calendar, DollarSign, Percent, Clock, FileText } from 'lucide-react';
+import { Building, Calendar, DollarSign, Percent, Clock, FileText, CreditCard, History, ChevronDown, ChevronUp } from 'lucide-react';
+import { LoanPaymentModal } from './LoanPaymentModal';
 
 interface LoansModalProps {
   open: boolean;
@@ -17,6 +18,11 @@ export const LoansModal: React.FC<LoansModalProps> = ({ open, onClose }) => {
   const { user } = useAppSelector((state) => state.auth);
   const [loans, setLoans] = useState<LoanDTO[]>([]);
   const [loading, setLoading] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState<LoanDTO | null>(null);
+  const [expandedLoan, setExpandedLoan] = useState<number | null>(null);
+  const [payments, setPayments] = useState<Record<number, LoanPaymentDTO[]>>({});
+  const [loadingPayments, setLoadingPayments] = useState<number | null>(null);
 
   useEffect(() => {
     if (open && user?.userId) {
@@ -37,6 +43,45 @@ export const LoansModal: React.FC<LoansModalProps> = ({ open, onClose }) => {
       toast.error('Failed to load loans');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPaymentHistory = async (loanId: number) => {
+    if (payments[loanId]) {
+      setExpandedLoan(expandedLoan === loanId ? null : loanId);
+      return;
+    }
+
+    setLoadingPayments(loanId);
+    try {
+      const response = await loanPaymentsApi.getByLoanId(loanId);
+      if (response.success && response.data) {
+        setPayments(prev => ({ ...prev, [loanId]: response.data }));
+        setExpandedLoan(loanId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch payment history:', error);
+      toast.error('Failed to load payment history');
+    } finally {
+      setLoadingPayments(null);
+    }
+  };
+
+  const handleMakePayment = (loan: LoanDTO) => {
+    setSelectedLoan(loan);
+    setPaymentModalOpen(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    fetchLoans();
+    // Refresh payment history if expanded
+    if (selectedLoan && expandedLoan === selectedLoan.loanId) {
+      setPayments(prev => {
+        const newPayments = { ...prev };
+        delete newPayments[selectedLoan.loanId];
+        return newPayments;
+      });
+      fetchPaymentHistory(selectedLoan.loanId);
     }
   };
 
@@ -173,6 +218,76 @@ export const LoansModal: React.FC<LoansModalProps> = ({ open, onClose }) => {
                       </div>
                     </div>
                   )}
+
+                  {/* Actions for ACTIVE loans */}
+                  {loan.status === 'ACTIVE' && (
+                    <div className="mt-4 pt-4 border-t border-border flex gap-2">
+                      <Button 
+                        size="sm" 
+                        onClick={() => handleMakePayment(loan)}
+                        className="flex items-center gap-1"
+                      >
+                        <CreditCard className="h-4 w-4" />
+                        Make Payment
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => fetchPaymentHistory(loan.loanId)}
+                        className="flex items-center gap-1"
+                      >
+                        {loadingPayments === loan.loanId ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        ) : (
+                          <>
+                            <History className="h-4 w-4" />
+                            Payment History
+                            {expandedLoan === loan.loanId ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Payment History */}
+                  {expandedLoan === loan.loanId && payments[loan.loanId] && (
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <p className="text-sm font-semibold mb-3 flex items-center gap-2">
+                        <History className="h-4 w-4" />
+                        Payment History ({payments[loan.loanId].length} payments)
+                      </p>
+                      {payments[loan.loanId].length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No payments made yet</p>
+                      ) : (
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {payments[loan.loanId].map((payment) => (
+                            <div key={payment.paymentId} className="bg-muted/50 rounded p-3 text-sm">
+                              <div className="flex justify-between items-center">
+                                <span className="font-mono text-xs">{payment.paymentNo}</span>
+                                <span className={`text-xs px-2 py-0.5 rounded ${
+                                  payment.paymentStatus === 'COMPLETED' ? 'bg-success/10 text-success' :
+                                  payment.paymentStatus === 'LATE' ? 'bg-gold-muted text-foreground' :
+                                  'bg-muted text-muted-foreground'
+                                }`}>
+                                  {payment.paymentStatus}
+                                </span>
+                              </div>
+                              <div className="flex justify-between items-center mt-1">
+                                <span className="text-muted-foreground">{formatDate(payment.paymentDate)}</span>
+                                <span className="font-semibold">{formatCurrency(payment.paymentAmount)}</span>
+                              </div>
+                              {payment.lateFee > 0 && (
+                                <p className="text-xs text-destructive mt-1">Late fee: {formatCurrency(payment.lateFee)}</p>
+                              )}
+                              {payment.notes && (
+                                <p className="text-xs text-muted-foreground mt-1">{payment.notes}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -185,6 +300,13 @@ export const LoansModal: React.FC<LoansModalProps> = ({ open, onClose }) => {
           </Button>
         </div>
       </DialogContent>
+
+      <LoanPaymentModal
+        open={paymentModalOpen}
+        onClose={() => setPaymentModalOpen(false)}
+        loan={selectedLoan}
+        onSuccess={handlePaymentSuccess}
+      />
     </Dialog>
   );
 };

@@ -237,7 +237,7 @@ export interface LoanPaymentDTO {
   interestAmount: number;
   remainingBalance: number;
   paymentDate: string;
-  paymentStatus: 'COMPLETED' | 'PENDING' | 'FAILED';
+  paymentStatus: 'COMPLETED' | 'PENDING' | 'FAILED' | 'LATE';
   paymentMethod: string;
   accountNumber: string;
   lateFee: number;

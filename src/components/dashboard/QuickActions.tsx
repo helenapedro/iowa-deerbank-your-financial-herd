@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Send, Download, Receipt, UserPlus, CreditCard, Building } from 'lucide-react';
+import { Send, Download, Receipt, UserPlus, Building, PlusCircle } from 'lucide-react';
 
 interface QuickAction {
   icon: React.ReactNode;
@@ -14,9 +14,10 @@ interface QuickActionsProps {
   onAddPayee: () => void;
   onPayBills: () => void;
   onLoans: () => void;
+  onApplyLoan: () => void;
 }
 
-export const QuickActions: React.FC<QuickActionsProps> = ({ onTransfer, onAddPayee, onPayBills, onLoans }) => {
+export const QuickActions: React.FC<QuickActionsProps> = ({ onTransfer, onAddPayee, onPayBills, onLoans, onApplyLoan }) => {
   const actions: QuickAction[] = [
     {
       icon: <Send size={24} />,
@@ -31,28 +32,28 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onTransfer, onAddPay
       color: 'bg-secondary/20 text-secondary-foreground',
     },
     {
-      icon: <Download size={24} />,
-      label: 'Deposit',
-      onClick: () => {},
-      color: 'bg-success/10 text-success',
-    },
-    {
       icon: <Receipt size={24} />,
       label: 'Pay Bills',
       onClick: onPayBills,
       color: 'bg-gold-muted text-foreground',
     },
     {
-      icon: <CreditCard size={24} />,
-      label: 'Cards',
-      onClick: () => {},
-      color: 'bg-accent text-accent-foreground',
-    },
-    {
       icon: <Building size={24} />,
-      label: 'Loans',
+      label: 'My Loans',
       onClick: onLoans,
       color: 'bg-muted text-muted-foreground',
+    },
+    {
+      icon: <PlusCircle size={24} />,
+      label: 'Apply Loan',
+      onClick: onApplyLoan,
+      color: 'bg-success/10 text-success',
+    },
+    {
+      icon: <Download size={24} />,
+      label: 'Deposit',
+      onClick: () => {},
+      color: 'bg-accent text-accent-foreground',
     },
   ];
 
