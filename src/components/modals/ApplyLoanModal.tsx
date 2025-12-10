@@ -95,10 +95,20 @@ export const ApplyLoanModal: React.FC<ApplyLoanModalProps> = ({ open, onClose, o
 
     setLoading(true);
     try {
-      const loan = await loansApi.apply({
-        ...formData,
+      // Build request exactly matching backend DTO
+      const requestData = {
         accountNumber: user.accountNo,
-      });
+        loanType: formData.loanType,
+        principalAmount: formData.principalAmount,
+        interestRate: formData.interestRate,
+        loanTermMonths: formData.loanTermMonths,
+        purpose: formData.purpose.trim(),
+        ...(formData.collateral?.trim() ? { collateral: formData.collateral.trim() } : {}),
+      };
+      
+      console.log('Loan request payload:', JSON.stringify(requestData, null, 2));
+      
+      const loan = await loansApi.apply(requestData);
 
       toast.success(`Loan application submitted! Loan No: ${loan.loanNo}`);
       onSuccess?.();
