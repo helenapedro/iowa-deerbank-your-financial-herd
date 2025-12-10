@@ -25,6 +25,7 @@ import {
 } from '@/types/auth';
 
 const API_BASE_URL = 'http://localhost:8080/api';
+const API_KEY = 'my-super-secret-api-key-12345';
 
 // Token management
 let authToken: string | null = null;
@@ -36,7 +37,10 @@ export const setAuthToken = (token: string | null) => {
 export const getAuthToken = () => authToken;
 
 const getHeaders = (includeAuth: boolean = true): HeadersInit => {
-  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  const headers: HeadersInit = { 
+    'Content-Type': 'application/json',
+    'X-API-Key': API_KEY
+  };
   if (includeAuth && authToken) {
     headers['Authorization'] = `Bearer ${authToken}`;
   }
