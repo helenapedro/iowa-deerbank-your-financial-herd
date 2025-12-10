@@ -67,9 +67,11 @@ export const LoanPaymentModal: React.FC<LoanPaymentModalProps> = ({ open, onClos
       } else {
         toast.error(response.message || 'Payment failed');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Loan payment error:', error);
-      toast.error('Failed to process payment');
+      // Handle backend error response format: { error: "...", status: "error" }
+      const errorMessage = error?.response?.error || error?.message || 'Failed to process payment';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
