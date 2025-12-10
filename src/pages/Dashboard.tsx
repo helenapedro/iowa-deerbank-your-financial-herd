@@ -6,6 +6,7 @@ import { QuickActions } from '@/components/dashboard/QuickActions';
 import { TransactionList } from '@/components/dashboard/TransactionList';
 import { TransferModal } from '@/components/modals/TransferModal';
 import { AddPayeeModal } from '@/components/modals/AddPayeeModal';
+import { LoansModal } from '@/components/modals/LoansModal';
 import { accountsApi } from '@/services/api';
 import { Transaction } from '@/types/auth';
 import { toast } from 'sonner';
@@ -17,6 +18,7 @@ const Dashboard: React.FC = () => {
   const [loadingTransactions, setLoadingTransactions] = useState(true);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [addPayeeModalOpen, setAddPayeeModalOpen] = useState(false);
+  const [loansModalOpen, setLoansModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -75,6 +77,8 @@ const Dashboard: React.FC = () => {
           <QuickActions 
             onTransfer={() => setTransferModalOpen(true)}
             onAddPayee={() => setAddPayeeModalOpen(true)}
+            onPayBills={() => setTransferModalOpen(true)}
+            onLoans={() => setLoansModalOpen(true)}
           />
         </div>
 
@@ -132,6 +136,10 @@ const Dashboard: React.FC = () => {
       <AddPayeeModal 
         open={addPayeeModalOpen} 
         onClose={() => setAddPayeeModalOpen(false)} 
+      />
+      <LoansModal
+        open={loansModalOpen}
+        onClose={() => setLoansModalOpen(false)}
       />
     </div>
   );
