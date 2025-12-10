@@ -53,7 +53,10 @@ const getHeaders = (includeAuth: boolean = true): HeadersInit => {
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'An error occurred' }));
-    throw new Error(error.message || 'An error occurred');
+    // Preserve the full error object for better error messages (e.g., insufficient balance)
+    const errorWithResponse = new Error(error.error || error.message || 'An error occurred');
+    (errorWithResponse as any).response = error;
+    throw errorWithResponse;
   }
   return response.json();
 }
