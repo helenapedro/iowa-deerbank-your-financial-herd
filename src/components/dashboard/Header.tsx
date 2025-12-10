@@ -29,7 +29,8 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     navigate('/');
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
     return name
       .split(' ')
       .map((n) => n[0])
