@@ -26,9 +26,11 @@ const getStoredUser = (): User | null => {
   }
 };
 
+const storedUser = getStoredUser();
+
 const initialState: AuthState = {
-  user: getStoredUser(),
-  isAuthenticated: !!getStoredUser(),
+  user: storedUser,
+  isAuthenticated: !!storedUser,
   isLoading: false,
 };
 
