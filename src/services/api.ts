@@ -220,13 +220,13 @@ export const loansApi = {
     return responseData as LoanDTO;
   },
 
-  // Get loan by ID
-  getById: async (loanId: number): Promise<LoanApiResponse> => {
+  // Get loan by ID - returns LoanDTO directly
+  getById: async (loanId: number): Promise<LoanDTO> => {
     const response = await fetch(`${API_BASE_URL}/loans/${loanId}`, {
       method: 'GET',
       headers: getHeaders(),
     });
-    return handleResponse<LoanApiResponse>(response);
+    return handleResponse<LoanDTO>(response);
   },
 
   // Get all loans for a user
@@ -256,22 +256,22 @@ export const loansApi = {
     return handleResponse<LoanSummaryResponse>(response);
   },
 
-  // Admin: Approve loan
-  approve: async (loanId: number, approvedBy: number): Promise<LoanApiResponse> => {
+  // Admin: Approve loan - returns LoanDTO directly
+  approve: async (loanId: number, approvedBy: number): Promise<LoanDTO> => {
     const response = await fetch(`${API_BASE_URL}/loans/${loanId}/approve?approvedBy=${approvedBy}`, {
       method: 'PUT',
       headers: getHeaders(),
     });
-    return handleResponse<LoanApiResponse>(response);
+    return handleResponse<LoanDTO>(response);
   },
 
-  // Admin: Disburse loan
-  disburse: async (loanId: number, disbursedBy: number): Promise<LoanApiResponse> => {
+  // Admin: Disburse loan - returns LoanDTO directly
+  disburse: async (loanId: number, disbursedBy: number): Promise<LoanDTO> => {
     const response = await fetch(`${API_BASE_URL}/loans/${loanId}/disburse?disbursedBy=${disbursedBy}`, {
       method: 'PUT',
       headers: getHeaders(),
     });
-    return handleResponse<LoanApiResponse>(response);
+    return handleResponse<LoanDTO>(response);
   },
 };
 
