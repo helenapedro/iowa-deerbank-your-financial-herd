@@ -26,6 +26,7 @@ export interface LoginResponse {
   accountNo: string;
   accountType: string;
   balance: number;
+  token: string;
 }
 
 // For backwards compatibility
@@ -190,6 +191,103 @@ export interface PaymentApiResponse {
 
 // For backwards compatibility
 export type PaymentResponse = PaymentApiResponse;
+
+// Loan DTOs
+export interface LoanRequestDTO {
+  accountNumber: string;
+  loanType: 'PERSONAL' | 'HOME' | 'AUTO' | 'BUSINESS' | 'EDUCATION';
+  principalAmount: number;
+  interestRate: number;
+  loanTermMonths: number;
+  purpose: string;
+  collateral?: string;
+}
+
+export interface LoanDTO {
+  loanId: number;
+  loanNo: string;
+  loanType: string;
+  principalAmount: number;
+  interestRate: number;
+  loanTermMonths: number;
+  monthlyPayment: number;
+  remainingBalance: number;
+  status: 'PENDING' | 'APPROVED' | 'ACTIVE' | 'CLOSED' | 'REJECTED' | 'DEFAULTED';
+  applicationDate: string;
+  approvalDate: string | null;
+  disbursementDate: string | null;
+  maturityDate: string | null;
+  nextPaymentDate: string | null;
+  purpose: string;
+  collateral: string | null;
+  userId: number;
+  accountId: number;
+  userName: string;
+  accountNo: string;
+  totalPaymentsMade: number;
+  latePaymentCount: number;
+}
+
+export interface LoanPaymentDTO {
+  paymentId: number;
+  paymentNo: string;
+  loanId: number;
+  paymentAmount: number;
+  principalAmount: number;
+  interestAmount: number;
+  remainingBalance: number;
+  paymentDate: string;
+  paymentStatus: 'COMPLETED' | 'PENDING' | 'FAILED';
+  paymentMethod: string;
+  accountNumber: string;
+  lateFee: number;
+  notes: string | null;
+  loanNo: string;
+}
+
+export interface LoanPaymentRequest {
+  loanId: number;
+  paymentAmount: number;
+  paymentMethod: string;
+  accountNumber: string;
+  notes?: string;
+}
+
+export interface LoanSummary {
+  activeLoanCount: number;
+  totalOutstandingBalance: number;
+  activeLoans: LoanDTO[];
+}
+
+export interface LoanApiResponse {
+  data: LoanDTO;
+  success: boolean;
+  message: string;
+}
+
+export interface LoansListResponse {
+  data: LoanDTO[];
+  success: boolean;
+  message: string;
+}
+
+export interface LoanPaymentApiResponse {
+  data: LoanPaymentDTO;
+  success: boolean;
+  message: string;
+}
+
+export interface LoanPaymentsListResponse {
+  data: LoanPaymentDTO[];
+  success: boolean;
+  message: string;
+}
+
+export interface LoanSummaryResponse {
+  data: LoanSummary;
+  success: boolean;
+  message: string;
+}
 
 // Generic API Response
 export interface ApiResponse<T> {

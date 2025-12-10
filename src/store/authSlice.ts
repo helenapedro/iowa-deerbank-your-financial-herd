@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '@/types/auth';
+import { setAuthToken } from '@/services/api';
 
 interface AuthState {
   user: User | null;
@@ -10,7 +11,15 @@ interface AuthState {
 const getStoredUser = (): User | null => {
   try {
     const storedUser = localStorage.getItem('deerbank_user');
-    return storedUser ? JSON.parse(storedUser) : null;
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      // Restore token from stored user
+      if (user.token) {
+        setAuthToken(user.token);
+      }
+      return user;
+    }
+    return null;
   } catch {
     localStorage.removeItem('deerbank_user');
     return null;
@@ -41,6 +50,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.isLoading = false;
       localStorage.removeItem('deerbank_user');
+      setAuthToken(null);
     },
     updateBalance: (state, action: PayloadAction<number>) => {
       if (state.user) {
