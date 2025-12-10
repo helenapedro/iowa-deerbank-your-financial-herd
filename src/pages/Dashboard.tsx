@@ -20,15 +20,15 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchTransactions = async () => {
-      if (!user) return;
+      if (!user || !user.accountNo) return;
       
       setLoadingTransactions(true);
       try {
         const response = await accountsApi.getTransactions({
           accountNo: user.accountNo,
-          name: user.name,
-          contactNo: user.contactNo,
-          isMasterUser: true
+          name: user.name || undefined,
+          contactNo: user.contactNo || undefined,
+          isMasterUser: user.userType === 'MASTER'
         });
         
         if (response.success) {
@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    if (user) {
+    if (user && user.accountNo) {
       fetchTransactions();
     }
   }, [user]);
@@ -63,10 +63,10 @@ const Dashboard: React.FC = () => {
         {/* Balance Section */}
         <div className="animate-fade-in">
           <BalanceCard
-            balance={user.balance}
-            accountNo={user.accountNo}
-            accountType={user.accountType}
-            name={user.name}
+            balance={user.balance ?? 0}
+            accountNo={user.accountNo ?? 'N/A'}
+            accountType={user.accountType ?? 'N/A'}
+            name={user.name ?? 'User'}
           />
         </div>
 
@@ -94,15 +94,15 @@ const Dashboard: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Account Holder</span>
-                  <span className="font-medium">{user.name}</span>
+                  <span className="font-medium">{user.name ?? 'N/A'}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Account Number</span>
-                  <span className="font-mono">{user.accountNo}</span>
+                  <span className="font-mono">{user.accountNo ?? 'N/A'}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Account Type</span>
-                  <span>{user.accountType}</span>
+                  <span>{user.accountType ?? 'N/A'}</span>
                 </div>
               </div>
               <div className="space-y-3">
@@ -112,11 +112,11 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="flex justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Contact</span>
-                  <span>{user.contactNo}</span>
+                  <span>{user.contactNo ?? 'N/A'}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Address</span>
-                  <span className="text-right max-w-[200px] truncate">{user.address}</span>
+                  <span className="text-right max-w-[200px] truncate">{user.address ?? 'N/A'}</span>
                 </div>
               </div>
             </div>

@@ -17,15 +17,15 @@ export interface LoginResponse {
   username: string;
   userType: 'CUSTOMER' | 'MASTER';
   status: string;
-  userId: number;
-  name: string;
-  dob: string;
-  address: string;
-  contactNo: string;
-  accountId: number;
-  accountNo: string;
-  accountType: string;
-  balance: number;
+  userId: number | null;
+  name: string | null;
+  dob: string | null;
+  address: string | null;
+  contactNo: string | null;
+  accountId: number | null;
+  accountNo: string | null;
+  accountType: string | null;
+  balance: number | null;
   token: string;
 }
 

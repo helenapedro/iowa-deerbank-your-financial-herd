@@ -35,12 +35,19 @@ const Auth: React.FC = () => {
     accountNumber: '',
   });
 
+  // Get user for redirect logic
+  const { user } = useAppSelector((state) => state.auth);
+
   // Redirect if already authenticated
   React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
+    if (isAuthenticated && user) {
+      if (user.userType === 'MASTER') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +71,13 @@ const Auth: React.FC = () => {
         }
         dispatch(login(response.data));
         toast.success(response.message || 'Welcome back!');
-        navigate('/dashboard');
+        
+        // Redirect based on user type
+        if (response.data.userType === 'MASTER') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         toast.error(response.message || 'Login failed');
       }
