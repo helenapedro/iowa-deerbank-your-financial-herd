@@ -9,6 +9,7 @@ import { store } from "@/store";
 import { logout } from "@/store/authSlice";
 import { setSessionExpiredCallback } from "@/services/api";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { SessionWarningModal } from "@/components/SessionWarningModal";
 import { toast } from "sonner";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -34,7 +35,12 @@ const SessionHandler = ({ children }: { children: React.ReactNode }) => {
     };
   }, [navigate]);
 
-  return <>{children}</>;
+  return (
+    <>
+      <SessionWarningModal />
+      {children}
+    </>
+  );
 };
 
 const App = () => (
