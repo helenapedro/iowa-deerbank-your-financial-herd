@@ -88,8 +88,9 @@ export const ApplyLoanModal: React.FC<ApplyLoanModalProps> = ({ open, onClose, o
       return;
     }
 
-    if (!formData.purpose.trim()) {
-      toast.error('Please provide a purpose for the loan');
+    const purposeLength = formData.purpose.trim().length;
+    if (purposeLength < 10 || purposeLength > 500) {
+      toast.error('Purpose must be between 10 and 500 characters');
       return;
     }
 
@@ -125,9 +126,15 @@ export const ApplyLoanModal: React.FC<ApplyLoanModalProps> = ({ open, onClose, o
       });
     } catch (error: any) {
       console.error('Loan application error:', error);
-      // Handle backend error response format: { error: "...", status: "error" }
-      const errorMessage = error?.response?.error || error?.message || 'Failed to submit loan application';
-      toast.error(errorMessage);
+      // Handle backend validation errors: { success: false, message: "...", errors: {...} }
+      const response = error?.response;
+      if (response?.errors) {
+        const errorMessages = Object.values(response.errors).join('. ');
+        toast.error(errorMessages);
+      } else {
+        const errorMessage = response?.message || response?.error || error?.message || 'Failed to submit loan application';
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
