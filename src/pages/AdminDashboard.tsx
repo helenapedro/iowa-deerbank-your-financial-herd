@@ -53,12 +53,8 @@ const AdminDashboard: React.FC = () => {
     setIsSearching(true);
     setCurrentLoan(null);
     try {
-      const response = await loansApi.getById(loanId);
-      if (response.success && response.data) {
-        setCurrentLoan(response.data);
-      } else {
-        toast.error(response.message || 'Loan not found');
-      }
+      const loan = await loansApi.getById(loanId);
+      setCurrentLoan(loan);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Loan not found');
     } finally {
@@ -71,14 +67,9 @@ const AdminDashboard: React.FC = () => {
     
     setIsProcessing(true);
     try {
-      // Admin credentialId is 1 based on backend constraint
-      const response = await loansApi.approve(currentLoan.loanId, 1);
-      if (response.success && response.data) {
-        toast.success('Loan approved successfully');
-        setCurrentLoan(response.data);
-      } else {
-        toast.error(response.message || 'Failed to approve loan');
-      }
+      const loan = await loansApi.approve(currentLoan.loanId, 1);
+      toast.success('Loan approved successfully');
+      setCurrentLoan(loan);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to approve loan');
     } finally {
@@ -91,14 +82,9 @@ const AdminDashboard: React.FC = () => {
     
     setIsProcessing(true);
     try {
-      // Admin credentialId is 1 based on backend constraint
-      const response = await loansApi.disburse(currentLoan.loanId, 1);
-      if (response.success && response.data) {
-        toast.success('Loan disbursed successfully');
-        setCurrentLoan(response.data);
-      } else {
-        toast.error(response.message || 'Failed to disburse loan');
-      }
+      const loan = await loansApi.disburse(currentLoan.loanId, 1);
+      toast.success('Loan disbursed successfully');
+      setCurrentLoan(loan);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to disburse loan');
     } finally {
