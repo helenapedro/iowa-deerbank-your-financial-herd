@@ -32,4 +32,4 @@ jobs:
           username: u570810680.projects2025
           password: Leinha@1994
           local-dir: ./dist/
-          server-dir: /home/u570810680/domains/hmpedro.com/public_html
+          server-dir: /home/u570810680/domains/hmpedro.com/public_html/
