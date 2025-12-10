@@ -29,7 +29,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.hmpedro.com
-          username: ${{secrets.FTP_USERNAME}}
+          username: u570810680.projects2025
           password: ${{secrets.FTP_PASSWORD}}
           local-dir: ./dist/
           server-dir: ${{secrets.FTP_SERVER_DIR}}
