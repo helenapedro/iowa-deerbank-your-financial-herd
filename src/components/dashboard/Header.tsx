@@ -29,8 +29,8 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     navigate('/');
   };
 
-  const getInitials = (name: string | null | undefined) => {
-    if (!name) return 'U';
+  const getInitials = (name: string | null | undefined, userType: string | undefined) => {
+    if (!name) return userType === 'MASTER' ? 'A' : 'U';
     return name
       .split(' ')
       .map((n) => n[0])
@@ -67,11 +67,11 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               <Button variant="ghost" className="gap-2 pl-2 pr-3">
                 <Avatar className="w-8 h-8">
                   <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                    {user ? getInitials(user.name) : 'U'}
+                    {user ? getInitials(user.name, user.userType) : 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden md:inline text-sm font-medium">
-                  {user?.name?.split(' ')[0] || 'User'}
+                  {user?.name?.split(' ')[0] || (user?.userType === 'MASTER' ? 'Admin' : 'User')}
                 </span>
               </Button>
             </DropdownMenuTrigger>
