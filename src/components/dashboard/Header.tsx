@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden md:inline text-sm font-medium">
-                  {user?.name.split(' ')[0]}
+                  {user?.name?.split(' ')[0] || 'User'}
                 </span>
               </Button>
             </DropdownMenuTrigger>
