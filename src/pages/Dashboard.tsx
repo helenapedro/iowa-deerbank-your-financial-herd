@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/store/hooks';
 import { Header } from '@/components/dashboard/Header';
 import { BalanceCard } from '@/components/dashboard/BalanceCard';
@@ -13,7 +14,15 @@ import { Transaction } from '@/types/auth';
 import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
+
+  // Redirect MASTER users to admin dashboard
+  useEffect(() => {
+    if (user?.userType === 'MASTER') {
+      navigate('/admin', { replace: true });
+    }
+  }, [user, navigate]);
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
