@@ -15,9 +15,10 @@ interface QuickActionsProps {
   onPayBills: () => void;
   onLoans: () => void;
   onApplyLoan: () => void;
+  onDeposit: () => void;
 }
 
-export const QuickActions: React.FC<QuickActionsProps> = ({ onTransfer, onAddPayee, onPayBills, onLoans, onApplyLoan }) => {
+export const QuickActions: React.FC<QuickActionsProps> = ({ onTransfer, onAddPayee, onPayBills, onLoans, onApplyLoan, onDeposit }) => {
   const actions: QuickAction[] = [
     {
       icon: <Send size={24} />,
@@ -52,7 +53,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onTransfer, onAddPay
     {
       icon: <Download size={24} />,
       label: 'Deposit',
-      onClick: () => {},
+      onClick: onDeposit,
       color: 'bg-accent text-accent-foreground',
     },
   ];
