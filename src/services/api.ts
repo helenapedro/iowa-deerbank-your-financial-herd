@@ -33,13 +33,6 @@ const API_KEY = 'my-super-secret-api-key-12345';
 // Token management
 let authToken: string | null = null;
 
-// Session expiration event - components can subscribe to this
-type SessionExpiredCallback = () => void;
-let sessionExpiredCallback: SessionExpiredCallback | null = null;
-
-export const setSessionExpiredCallback = (callback: SessionExpiredCallback | null) => {
-  sessionExpiredCallback = callback;
-};
 
 export const setAuthToken = (token: string | null) => {
   authToken = token;
@@ -60,21 +53,12 @@ const getHeaders = (includeAuth: boolean = true): HeadersInit => {
 };
 
 async function handleResponse<T>(response: Response): Promise<T> {
-  // Handle session expiration (401 Unauthorized or 403 Forbidden)
-  if (response.status === 401 || response.status === 403) {
-    if (sessionExpiredCallback) {
-      sessionExpiredCallback();
-    }
-    const error = new Error('Session expired. Please log in again.');
-    (error as any).sessionExpired = true;
-    throw error;
-  }
-  
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'An error occurred' }));
     // Preserve the full error object for better error messages (e.g., insufficient balance)
     const errorWithResponse = new Error(error.error || error.message || 'An error occurred');
     (errorWithResponse as any).response = error;
+    (errorWithResponse as any).status = response.status;
     throw errorWithResponse;
   }
   return response.json();
