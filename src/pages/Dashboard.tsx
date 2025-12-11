@@ -9,6 +9,7 @@ import { TransferModal } from '@/components/modals/TransferModal';
 import { AddPayeeModal } from '@/components/modals/AddPayeeModal';
 import { LoansModal } from '@/components/modals/LoansModal';
 import { ApplyLoanModal } from '@/components/modals/ApplyLoanModal';
+import { DepositModal } from '@/components/modals/DepositModal';
 import { accountsApi } from '@/services/api';
 import { Transaction } from '@/types/auth';
 import { toast } from 'sonner';
@@ -30,31 +31,32 @@ const Dashboard: React.FC = () => {
   const [addPayeeModalOpen, setAddPayeeModalOpen] = useState(false);
   const [loansModalOpen, setLoansModalOpen] = useState(false);
   const [applyLoanModalOpen, setApplyLoanModalOpen] = useState(false);
+  const [depositModalOpen, setDepositModalOpen] = useState(false);
+
+  const fetchTransactions = async () => {
+    if (!user || !user.accountNo) return;
+    
+    setLoadingTransactions(true);
+    try {
+      const response = await accountsApi.getTransactions({
+        accountNo: user.accountNo,
+        name: user.name || undefined,
+        contactNo: user.contactNo || undefined,
+        isMasterUser: user.userType === 'MASTER'
+      });
+      
+      if (response.success) {
+        setTransactions(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch transactions:', error);
+      toast.error('Failed to load transactions');
+    } finally {
+      setLoadingTransactions(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!user || !user.accountNo) return;
-      
-      setLoadingTransactions(true);
-      try {
-        const response = await accountsApi.getTransactions({
-          accountNo: user.accountNo,
-          name: user.name || undefined,
-          contactNo: user.contactNo || undefined,
-          isMasterUser: user.userType === 'MASTER'
-        });
-        
-        if (response.success) {
-          setTransactions(response.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch transactions:', error);
-        toast.error('Failed to load transactions');
-      } finally {
-        setLoadingTransactions(false);
-      }
-    };
-
     if (user && user.accountNo) {
       fetchTransactions();
     }
@@ -91,6 +93,7 @@ const Dashboard: React.FC = () => {
             onPayBills={() => setTransferModalOpen(true)}
             onLoans={() => setLoansModalOpen(true)}
             onApplyLoan={() => setApplyLoanModalOpen(true)}
+            onDeposit={() => setDepositModalOpen(true)}
           />
         </div>
 
@@ -157,6 +160,11 @@ const Dashboard: React.FC = () => {
         open={applyLoanModalOpen}
         onClose={() => setApplyLoanModalOpen(false)}
         onSuccess={() => {}}
+      />
+      <DepositModal
+        open={depositModalOpen}
+        onClose={() => setDepositModalOpen(false)}
+        onSuccess={fetchTransactions}
       />
     </div>
   );
