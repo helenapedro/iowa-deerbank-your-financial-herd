@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,11 +10,25 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { updateBalance } from '@/store/authSlice';
-import { paymentsApi } from '@/services/api';
+import { paymentsApi, payeesApi } from '@/services/api';
 import { toast } from 'sonner';
 import { Loader2, Send, CheckCircle } from 'lucide-react';
+
+interface Payee {
+  payeeId: number;
+  name: string;
+  nickname: string;
+  accountNo: string;
+}
 
 interface TransferModalProps {
   open: boolean;
@@ -27,12 +41,43 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [result, setResult] = useState<{ billNo: string; tranNo: string } | null>(null);
+  const [payees, setPayees] = useState<Payee[]>([]);
+  const [loadingPayees, setLoadingPayees] = useState(false);
+  const [selectedPayeeId, setSelectedPayeeId] = useState<string>('');
   
   const [form, setForm] = useState({
     payeeAccount: '',
     amount: '',
     description: '',
   });
+
+  useEffect(() => {
+    if (open) {
+      fetchPayees();
+    }
+  }, [open]);
+
+  const fetchPayees = async () => {
+    setLoadingPayees(true);
+    try {
+      const response = await payeesApi.getAll();
+      if (response.success && response.data) {
+        setPayees(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch payees:', error);
+    } finally {
+      setLoadingPayees(false);
+    }
+  };
+
+  const handlePayeeSelect = (payeeId: string) => {
+    setSelectedPayeeId(payeeId);
+    const payee = payees.find(p => p.payeeId.toString() === payeeId);
+    if (payee) {
+      setForm({ ...form, payeeAccount: payee.accountNo });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +91,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
     }
 
     if (!form.payeeAccount.trim()) {
-      toast.error('Please enter a payee account number');
+      toast.error('Please select a payee');
       return;
     }
 
@@ -80,6 +125,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
 
   const handleClose = () => {
     setForm({ payeeAccount: '', amount: '', description: '' });
+    setSelectedPayeeId('');
     setSuccess(false);
     setResult(null);
     onClose();
@@ -123,14 +169,28 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="payee-account">Recipient Account Number</Label>
-                <Input
-                  id="payee-account"
-                  placeholder="ACC40156872"
-                  value={form.payeeAccount}
-                  onChange={(e) => setForm({ ...form, payeeAccount: e.target.value })}
-                  disabled={isLoading}
-                />
+                <Label htmlFor="payee-select">Select Payee</Label>
+                <Select
+                  value={selectedPayeeId}
+                  onValueChange={handlePayeeSelect}
+                  disabled={isLoading || loadingPayees}
+                >
+                  <SelectTrigger id="payee-select">
+                    <SelectValue placeholder={loadingPayees ? "Loading payees..." : "Select a payee"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {payees.map((payee) => (
+                      <SelectItem key={payee.payeeId} value={payee.payeeId.toString()}>
+                        {payee.name} ({payee.nickname}) - {payee.accountNo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {form.payeeAccount && (
+                  <p className="text-xs text-muted-foreground">
+                    Account: {form.payeeAccount}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="amount">Amount (USD)</Label>
