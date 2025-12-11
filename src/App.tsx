@@ -1,16 +1,12 @@
-import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "@/store";
-import { logout } from "@/store/authSlice";
-import { setSessionExpiredCallback } from "@/services/api";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SessionWarningModal } from "@/components/SessionWarningModal";
-import { toast } from "sonner";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -19,22 +15,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Component to handle session expiration inside Router context
+// Component to wrap session warning modal inside Router context
 const SessionHandler = ({ children }: { children: React.ReactNode }) => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    setSessionExpiredCallback(() => {
-      store.dispatch(logout());
-      toast.error("Session expired. Please log in again.");
-      navigate("/auth");
-    });
-
-    return () => {
-      setSessionExpiredCallback(null);
-    };
-  }, [navigate]);
-
   return (
     <>
       <SessionWarningModal />
