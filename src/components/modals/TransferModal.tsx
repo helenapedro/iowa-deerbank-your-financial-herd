@@ -28,6 +28,7 @@ interface Payee {
   name: string;
   nickname: string;
   accountNo: string;
+  userId: number;
 }
 
 interface TransferModalProps {
@@ -62,7 +63,11 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
     try {
       const response = await payeesApi.getAll();
       if (response.success && response.data) {
-        setPayees(response.data);
+        // Filter payees to only show those belonging to the current user
+        const userPayees = response.data.filter(
+          (payee: Payee) => payee.userId === user?.userId
+        );
+        setPayees(userPayees);
       }
     } catch (error) {
       console.error('Failed to fetch payees:', error);
@@ -179,11 +184,17 @@ export const TransferModal: React.FC<TransferModalProps> = ({ open, onClose }) =
                     <SelectValue placeholder={loadingPayees ? "Loading payees..." : "Select a payee"} />
                   </SelectTrigger>
                   <SelectContent>
-                    {payees.map((payee) => (
-                      <SelectItem key={payee.payeeId} value={payee.payeeId.toString()}>
-                        {payee.name} ({payee.nickname}) - {payee.accountNo}
-                      </SelectItem>
-                    ))}
+                    {payees.length === 0 ? (
+                      <div className="py-2 px-3 text-sm text-muted-foreground">
+                        No payees found. Add a payee first.
+                      </div>
+                    ) : (
+                      payees.map((payee) => (
+                        <SelectItem key={payee.payeeId} value={payee.payeeId.toString()}>
+                          {payee.name} ({payee.nickname}) - {payee.accountNo}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
                 {form.payeeAccount && (
