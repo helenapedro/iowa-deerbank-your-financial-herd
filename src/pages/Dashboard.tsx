@@ -20,7 +20,7 @@ const Dashboard: React.FC = () => {
 
   // Redirect ADMIN users to admin dashboard
   useEffect(() => {
-    if (user?.userType === 'ADMIN') {
+    if (user?.userType === 'MASTER') {
       navigate('/admin', { replace: true });
     }
   }, [user, navigate]);
@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
         accountNo: user.accountNo,
         name: user.name || undefined,
         contactNo: user.contactNo || undefined,
-        isMasterUser: user.userType === 'ADMIN'
+        isMasterUser: user.userType === 'MASTER'
       });
       
       if (response.success) {

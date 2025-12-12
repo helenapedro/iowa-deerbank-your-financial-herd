@@ -39,7 +39,7 @@ const Auth: React.FC = () => {
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated && user) {
-      if (user.userType === 'ADMIN') {
+      if (user.userType === 'MASTER') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
@@ -71,7 +71,7 @@ const Auth: React.FC = () => {
         toast.success(response.message || 'Welcome back!');
         
         // Redirect based on user type
-        if (response.data.userType === 'ADMIN') {
+        if (response.data.userType === 'MASTER') {
           navigate('/admin');
         } else {
           navigate('/dashboard');
