@@ -18,9 +18,9 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
 
-  // Redirect MASTER users to admin dashboard
+  // Redirect ADMIN users to admin dashboard
   useEffect(() => {
-    if (user?.userType === 'MASTER') {
+    if (user?.userType === 'ADMIN') {
       navigate('/admin', { replace: true });
     }
   }, [user, navigate]);
@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
         accountNo: user.accountNo,
         name: user.name || undefined,
         contactNo: user.contactNo || undefined,
-        isMasterUser: user.userType === 'MASTER'
+        isMasterUser: user.userType === 'ADMIN'
       });
       
       if (response.success) {
