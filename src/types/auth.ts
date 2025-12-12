@@ -14,7 +14,7 @@ export interface RegisterRequest {
 export interface LoginResponse {
   credentialId: number;
   username: string;
-  userType: 'CUSTOMER' | 'ADMIN';
+  userType: 'CUSTOMER' | 'MASTER';
   status: string;
   userId: number | null;
   name: string | null;
