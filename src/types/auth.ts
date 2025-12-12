@@ -125,7 +125,7 @@ export interface TransactionHistoryDTO {
   tranId: number;
   tranNo: string;
   tranDatetime: string;
-  transferType: 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER';
+  transferType: 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER' | 'LOAN_PAYMENT' | 'LOAN_DISBURSEMENT';
   amount: number;
   debit: string | null;
   credit: string | null;
@@ -303,6 +303,18 @@ export interface LoanPaymentsListResponse {
 
 export interface LoanSummaryResponse {
   data: LoanSummary;
+  success: boolean;
+  message: string;
+}
+
+// Loan Payment Summary DTO
+export interface LoanPaymentSummaryDTO {
+  totalPayments: number;
+  paymentCount: number;
+}
+
+export interface LoanPaymentSummaryResponse {
+  data: LoanPaymentSummaryDTO;
   success: boolean;
   message: string;
 }
