@@ -33,7 +33,8 @@ const AdminDashboard: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   
-  const [loanIdInput, setLoanIdInput] = useState('');
+  const [loanSearchInput, setLoanSearchInput] = useState('');
+  const [searchType, setSearchType] = useState<'id' | 'number'>('id');
   const [currentLoan, setCurrentLoan] = useState<LoanDTO | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -44,16 +45,32 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleSearchLoan = async () => {
-    const loanId = parseInt(loanIdInput);
-    if (isNaN(loanId) || loanId <= 0) {
-      toast.error('Please enter a valid Loan ID');
+    const searchValue = loanSearchInput.trim();
+    
+    if (!searchValue) {
+      toast.error('Please enter a search value');
       return;
     }
 
     setIsSearching(true);
     setCurrentLoan(null);
+    
     try {
-      const loan = await loansApi.getById(loanId);
+      let loan: LoanDTO;
+      
+      if (searchType === 'id') {
+        const loanId = parseInt(searchValue);
+        if (isNaN(loanId) || loanId <= 0) {
+          toast.error('Please enter a valid Loan ID');
+          setIsSearching(false);
+          return;
+        }
+        loan = await loansApi.getById(loanId);
+      } else {
+        // Search by loan number (e.g., LN-5658207766)
+        loan = await loansApi.getByLoanNumber(searchValue);
+      }
+      
       setCurrentLoan(loan);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Loan not found');
@@ -174,30 +191,50 @@ const AdminDashboard: React.FC = () => {
                   Search Loan
                 </CardTitle>
                 <CardDescription>
-                  Enter a Loan ID to view details and manage the loan
+                  Search by Loan ID or Loan Number to view details and manage the loan
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-4 items-end">
-                  <div className="flex-1 max-w-xs">
-                    <Label htmlFor="loanId">Loan ID</Label>
-                    <Input
-                      id="loanId"
-                      type="number"
-                      placeholder="Enter loan ID (e.g., 1)"
-                      value={loanIdInput}
-                      onChange={(e) => setLoanIdInput(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSearchLoan()}
-                    />
+                <div className="flex flex-col gap-4">
+                  <div className="flex gap-2">
+                    <Button
+                      variant={searchType === 'id' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSearchType('id')}
+                    >
+                      By Loan ID
+                    </Button>
+                    <Button
+                      variant={searchType === 'number' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSearchType('number')}
+                    >
+                      By Loan Number
+                    </Button>
                   </div>
-                  <Button onClick={handleSearchLoan} disabled={isSearching}>
-                    {isSearching ? (
-                      <Loader2 className="animate-spin h-4 w-4 mr-2" />
-                    ) : (
-                      <Search size={16} className="mr-2" />
-                    )}
-                    Search
-                  </Button>
+                  <div className="flex gap-4 items-end">
+                    <div className="flex-1 max-w-md">
+                      <Label htmlFor="loanSearch">
+                        {searchType === 'id' ? 'Loan ID' : 'Loan Number'}
+                      </Label>
+                      <Input
+                        id="loanSearch"
+                        type={searchType === 'id' ? 'number' : 'text'}
+                        placeholder={searchType === 'id' ? 'Enter loan ID (e.g., 1)' : 'Enter loan number (e.g., LN-5658207766)'}
+                        value={loanSearchInput}
+                        onChange={(e) => setLoanSearchInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearchLoan()}
+                      />
+                    </div>
+                    <Button onClick={handleSearchLoan} disabled={isSearching}>
+                      {isSearching ? (
+                        <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                      ) : (
+                        <Search size={16} className="mr-2" />
+                      )}
+                      Search
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
