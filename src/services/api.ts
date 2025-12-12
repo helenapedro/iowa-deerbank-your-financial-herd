@@ -231,6 +231,15 @@ export const loansApi = {
     return handleResponse<LoanDTO>(response);
   },
 
+  // Get loan by loan number - returns LoanDTO directly
+  getByLoanNumber: async (loanNo: string): Promise<LoanDTO> => {
+    const response = await fetch(`${API_BASE_URL}/loans/loan-number/${loanNo}`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return handleResponse<LoanDTO>(response);
+  },
+
   // Get all loans for a user
   getByUserId: async (userId: number): Promise<LoansListResponse> => {
     const response = await fetch(`${API_BASE_URL}/loans/user/${userId}`, {
