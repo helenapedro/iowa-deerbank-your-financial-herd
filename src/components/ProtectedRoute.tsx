@@ -4,10 +4,11 @@ import { useAppSelector } from '@/store/hooks';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  requireAdmin?: boolean;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
+  const { isAuthenticated, isLoading, user } = useAppSelector((state) => state.auth);
   const location = useLocation();
 
   if (isLoading) {
@@ -20,6 +21,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (!isAuthenticated) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  // Check if admin access is required
+  if (requireAdmin && user?.userType !== 'MASTER') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Redirect MASTER users trying to access customer dashboard
+  if (!requireAdmin && user?.userType === 'MASTER' && location.pathname === '/dashboard') {
+    return <Navigate to="/admin" replace />;
   }
 
   return <>{children}</>;
