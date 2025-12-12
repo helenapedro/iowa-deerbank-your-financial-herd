@@ -151,6 +151,7 @@ export interface PayeeRequest {
   email?: string;
   phone?: string;
   accountNo: string;
+  customeraccount: string;
   userId: number;
 }
 
