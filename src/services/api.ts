@@ -19,12 +19,12 @@ import {
   ApiResponse,
   LoanRequestDTO,
   LoanDTO,
-  LoanApiResponse,
   LoansListResponse,
   LoanPaymentRequest,
   LoanPaymentApiResponse,
   LoanPaymentsListResponse,
-  LoanSummaryResponse
+  LoanSummaryResponse,
+  LoanPaymentSummaryResponse
 } from '@/types/auth';
 
 // Use ngrok for Lovable preview, localhost for local development
@@ -187,6 +187,15 @@ export const paymentsApi = {
 };
 
 export const loansApi = {
+  // Get all loans (Admin only)
+  getAll: async (): Promise<LoansListResponse> => {
+    const response = await fetch(`${API_BASE_URL}/loans`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return handleResponse<LoansListResponse>(response);
+  },
+
   // Apply for a new loan - returns LoanDTO directly
   apply: async (data: LoanRequestDTO): Promise<LoanDTO> => {
     console.log('=== LOAN API REQUEST ===');
@@ -295,5 +304,23 @@ export const loanPaymentsApi = {
       headers: getHeaders(),
     });
     return handleResponse<LoanPaymentsListResponse>(response);
+  },
+
+  // Get payment summary for a loan
+  getSummary: async (loanId: number): Promise<LoanPaymentSummaryResponse> => {
+    const response = await fetch(`${API_BASE_URL}/loan-payments/loan/${loanId}/summary`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return handleResponse<LoanPaymentSummaryResponse>(response);
+  },
+
+  // Get transactions by account number
+  getByAccountNo: async (accountNo: string): Promise<TransactionsResponse> => {
+    const response = await fetch(`${API_BASE_URL}/loan-payments/account/${accountNo}/transactions`, {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    return handleResponse<TransactionsResponse>(response);
   },
 };
