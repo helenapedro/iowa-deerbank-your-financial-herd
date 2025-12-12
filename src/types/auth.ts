@@ -7,15 +7,14 @@ export interface LoginRequest {
 export interface RegisterRequest {
   username: string;
   password: string;
-  name: string;
-  contactNo: string;
-  accountNumber: string;
+  isAdmin: boolean;
+  accountNumber?: string; // Required for customers, not for admins
 }
 
 export interface LoginResponse {
   credentialId: number;
   username: string;
-  userType: 'CUSTOMER' | 'MASTER';
+  userType: 'CUSTOMER' | 'ADMIN';
   status: string;
   userId: number | null;
   name: string | null;
@@ -36,6 +35,25 @@ export interface AuthResponse {
   data: LoginResponse;
   success: boolean;
   message: string;
+}
+
+// Update Password DTOs
+export interface UpdatePasswordRequest {
+  username: string;
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface UpdatePasswordResponse {
+  username: string;
+  message: string;
+  updatedDate: string;
+}
+
+export interface UpdatePasswordApiResponse {
+  success: boolean;
+  message: string;
+  data?: UpdatePasswordResponse;
 }
 
 // Account DTOs

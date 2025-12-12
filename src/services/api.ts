@@ -2,6 +2,8 @@ import {
   LoginRequest, 
   RegisterRequest, 
   AuthResponse, 
+  UpdatePasswordRequest,
+  UpdatePasswordApiResponse,
   TransactionsResponse,
   GetTransactionsRequest,
   PayeeRequest,
@@ -79,6 +81,15 @@ export const authApi = {
       body: JSON.stringify(data),
     });
     return handleResponse<AuthResponse>(response);
+  },
+
+  updatePassword: async (data: UpdatePasswordRequest): Promise<UpdatePasswordApiResponse> => {
+    const response = await fetch(`${API_BASE_URL}/auth/update-password`, {
+      method: 'POST',
+      headers: getHeaders(false),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<UpdatePasswordApiResponse>(response);
   },
 };
 

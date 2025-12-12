@@ -30,8 +30,6 @@ const Auth: React.FC = () => {
     username: '',
     password: '',
     confirmPassword: '',
-    name: '',
-    contactNo: '',
     accountNumber: '',
   });
 
@@ -41,7 +39,7 @@ const Auth: React.FC = () => {
   // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated && user) {
-      if (user.userType === 'MASTER') {
+      if (user.userType === 'ADMIN') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
@@ -73,7 +71,7 @@ const Auth: React.FC = () => {
         toast.success(response.message || 'Welcome back!');
         
         // Redirect based on user type
-        if (response.data.userType === 'MASTER') {
+        if (response.data.userType === 'ADMIN') {
           navigate('/admin');
         } else {
           navigate('/dashboard');
@@ -91,7 +89,7 @@ const Auth: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!registerForm.username || !registerForm.password || !registerForm.name || !registerForm.contactNo || !registerForm.accountNumber) {
+    if (!registerForm.username || !registerForm.password || !registerForm.accountNumber) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -101,8 +99,8 @@ const Auth: React.FC = () => {
       return;
     }
 
-    if (registerForm.password.length < 8) {
-      toast.error('Password must be at least 8 characters');
+    if (registerForm.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
       return;
     }
 
@@ -111,8 +109,7 @@ const Auth: React.FC = () => {
       const response = await authApi.register({
         username: registerForm.username,
         password: registerForm.password,
-        name: registerForm.name,
-        contactNo: registerForm.contactNo,
+        isAdmin: false,
         accountNumber: registerForm.accountNumber,
       });
       
@@ -252,17 +249,6 @@ const Auth: React.FC = () => {
                 <CardContent>
                   <form onSubmit={handleRegister} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="register-name">Full Name</Label>
-                      <Input
-                        id="register-name"
-                        type="text"
-                        placeholder="Enter your full name"
-                        value={registerForm.name}
-                        onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
-                        disabled={isLoading}
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="register-username">Username</Label>
                       <Input
                         id="register-username"
@@ -270,17 +256,6 @@ const Auth: React.FC = () => {
                         placeholder="Choose a username"
                         value={registerForm.username}
                         onChange={(e) => setRegisterForm({ ...registerForm, username: e.target.value })}
-                        disabled={isLoading}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="register-contact">Contact Number</Label>
-                      <Input
-                        id="register-contact"
-                        type="tel"
-                        placeholder="+1-555-0123"
-                        value={registerForm.contactNo}
-                        onChange={(e) => setRegisterForm({ ...registerForm, contactNo: e.target.value })}
                         disabled={isLoading}
                       />
                     </div>
@@ -301,7 +276,7 @@ const Auth: React.FC = () => {
                         <Input
                           id="register-password"
                           type="password"
-                          placeholder="Min. 8 characters"
+                          placeholder="Min. 6 characters"
                           value={registerForm.password}
                           onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                           disabled={isLoading}

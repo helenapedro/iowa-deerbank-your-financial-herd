@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   };
 
   const getInitials = (name: string | null | undefined, userType: string | undefined) => {
-    if (!name) return userType === 'MASTER' ? 'A' : 'U';
+    if (!name) return userType === 'ADMIN' ? 'A' : 'U';
     return name
       .split(' ')
       .map((n) => n[0])
@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden md:inline text-sm font-medium">
-                  {user?.name?.split(' ')[0] || (user?.userType === 'MASTER' ? 'Admin' : 'User')}
+                  {user?.name?.split(' ')[0] || (user?.userType === 'ADMIN' ? 'Admin' : 'User')}
                 </span>
               </Button>
             </DropdownMenuTrigger>
