@@ -134,12 +134,12 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="customer-account">Customer Account *</Label>
+                <Label htmlFor="payee-account">Customer Account *</Label>
                 <Input
-                  id="customer-account"
+                  id="payee-account"
                   placeholder="ACC9926931465"
-                  value={form.customeraccount}
-                  onChange={(e) => setForm({ ...form, customeraccount: e.target.value })}
+                  value={form.accountNo}
+                  onChange={(e) => setForm({ ...form, accountNo: e.target.value })}
                   disabled={isLoading}
                 />
               </div>
