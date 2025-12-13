@@ -30,6 +30,7 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
     email: '',
     phone: '',
     accountNo: '',
+    customeraccount: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +38,7 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
     
     if (!user) return;
     
-    if (!form.name || !form.accountNo) {
+    if (!form.name || !form.accountNo !! !form.customeraccount) {
       toast.error('Please fill in required fields');
       return;
     }
@@ -128,6 +129,16 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
                   placeholder="ACC40156872"
                   value={form.accountNo}
                   onChange={(e) => setForm({ ...form, accountNo: e.target.value })}
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="customer-account">Customer Account *</Label>
+                <Input
+                  id="customer-account"
+                  placeholder="ACC9926931465"
+                  value={form.customeraccount}
+                  onChange={(e) => setForm({ ...form, customeraccount: e.target.value })}
                   disabled={isLoading}
                 />
               </div>
