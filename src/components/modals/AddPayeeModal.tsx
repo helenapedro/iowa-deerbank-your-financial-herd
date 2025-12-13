@@ -51,6 +51,7 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
         email: form.email,
         phone: form.phone,
         accountNo: form.accountNo,
+        customeraccount: form.customeraccount,
         userId: user.userId,
       });
 
@@ -68,7 +69,7 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
   };
 
   const handleClose = () => {
-    setForm({ name: '', nickname: '', email: '', phone: '', accountNo: '' });
+    setForm({ name: '', nickname: '', email: '', phone: '', accountNo: '', customeraccount: '' });
     setSuccess(false);
     onClose();
   };
