@@ -38,7 +38,7 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
     
     if (!user) return;
     
-    if (!form.name || !form.accountNo !! !form.customeraccount) {
+    if (!form.name || !form.accountNo || !form.customeraccount) {
       toast.error('Please fill in required fields');
       return;
     }
@@ -138,8 +138,8 @@ export const AddPayeeModal: React.FC<AddPayeeModalProps> = ({ open, onClose }) =
                 <Input
                   id="payee-account"
                   placeholder="ACC9926931465"
-                  value={form.accountNo}
-                  onChange={(e) => setForm({ ...form, accountNo: e.target.value })}
+                  value={form.customeraccount}
+                  onChange={(e) => setForm({ ...form, customeraccount: e.target.value })}
                   disabled={isLoading}
                 />
               </div>
